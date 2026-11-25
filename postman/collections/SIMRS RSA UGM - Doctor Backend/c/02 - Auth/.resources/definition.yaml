@@ -1,0 +1,5 @@
+$kind: collection
+name: '02 - Auth'
+description: Pengujian login dokter, validasi input, penolakan non-dokter, dan rotasi refresh token
+order: 2000
+

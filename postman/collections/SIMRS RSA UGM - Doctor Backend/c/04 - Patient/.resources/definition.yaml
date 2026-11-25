@@ -1,0 +1,5 @@
+$kind: collection
+name: '04 - Patient'
+description: Pengujian pencarian kandidat pasien berdasarkan NIK (/api/patients/by-nik)
+order: 4000
+

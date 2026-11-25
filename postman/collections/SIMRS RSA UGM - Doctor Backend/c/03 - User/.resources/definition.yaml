@@ -1,0 +1,5 @@
+$kind: collection
+name: '03 - User'
+description: Pengujian profil dokter yang sedang login (/api/users/me)
+order: 3000
+

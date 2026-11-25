@@ -1,0 +1,31 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/auth/login'
+order: 1000
+auth:
+  type: noauth
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "user_nm": ""
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 400 untuk payload login tidak valid', () => {
+        pm.response.to.have.status(400);
+      });
+
+      pm.test('Mengembalikan daftar field error validasi Zod', () => {
+        const body = pm.response.json();
+        pm.expect(body.errors).to.be.an('array').and.not.be.empty;
+        const fields = body.errors.map((e) => e.field);
+        pm.expect(fields).to.include('user_nm');
+        pm.expect(fields).to.include('password');
+      });
+

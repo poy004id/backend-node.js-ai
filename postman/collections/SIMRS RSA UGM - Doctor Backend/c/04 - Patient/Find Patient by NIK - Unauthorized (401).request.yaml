@@ -1,0 +1,17 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/patients/by-nik?nik={{sample_nik}}'
+order: 2000
+auth:
+  type: noauth
+queryParams:
+  - key: nik
+    value: '{{sample_nik}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 401 saat mencari pasien tanpa Bearer token', () => {
+        pm.response.to.have.status(401);
+      });
+

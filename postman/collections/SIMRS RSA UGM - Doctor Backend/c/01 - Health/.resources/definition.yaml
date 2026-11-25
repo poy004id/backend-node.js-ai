@@ -1,0 +1,5 @@
+$kind: collection
+name: '01 - Health'
+description: Verifikasi endpoint health check server
+order: 1000
+

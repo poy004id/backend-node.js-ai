@@ -1,0 +1,36 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/patients/by-nik?nik={{sample_nik}}'
+order: 3000
+queryParams:
+  - key: nik
+    value: '{{sample_nik}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 200 untuk pencarian kandidat pasien berdasarkan NIK 16 digit', () => {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test('Struktur respons { total, has_duplicate, candidates } dan field kandidat valid', () => {
+        const body = pm.response.json();
+        pm.expect(body).to.have.all.keys('total', 'has_duplicate', 'candidates');
+        pm.expect(body.candidates).to.be.an('array');
+        pm.expect(body.total).to.eql(body.candidates.length);
+        pm.expect(body.has_duplicate).to.eql(body.candidates.length > 1);
+
+        for (const c of body.candidates) {
+          pm.expect(c).to.have.all.keys(
+            'person_id',
+            'nik',
+            'person_nm',
+            'birth_dttm',
+            'adm_gender_cd',
+            'status_cd',
+            'is_employee'
+          );
+          pm.expect(c.is_employee).to.be.a('boolean');
+        }
+      });
+

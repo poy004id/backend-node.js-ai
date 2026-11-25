@@ -1,0 +1,14 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/users/me'
+order: 1000
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 401 saat mengakses /api/users/me tanpa Bearer token', () => {
+        pm.response.to.have.status(401);
+      });
+

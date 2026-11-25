@@ -1,0 +1,54 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/auth/login'
+order: 4000
+auth:
+  type: noauth
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "user_nm": "{{doctor_username}}",
+      "password": "{{doctor_password}}"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 200 untuk login dokter berhasil', () => {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test('Respons hanya berisi access_token, token_type, expires_in (tanpa objek user mentah)', () => {
+        const body = pm.response.json();
+        pm.expect(body).to.have.all.keys('access_token', 'token_type', 'expires_in');
+        pm.expect(body.token_type).to.eql('Bearer');
+        pm.expect(body.expires_in).to.eql(900);
+        pm.expect(body.access_token).to.be.a('string').and.not.be.empty;
+
+        pm.collectionVariables.set('access_token', body.access_token);
+      });
+
+      pm.test('JWT payload hanya memuat klaim yang diizinkan tanpa NIK/nama/password', () => {
+        const body = pm.response.json();
+        const payloadB64 = body.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(payloadB64));
+        pm.expect(payload).to.have.all.keys(
+          'user_id', 'person_id', 'org_id', 'profession_id',
+          'profession_type', 'pgroup_id', 'sid', 'jti', 'iss', 'iat', 'exp'
+        );
+        pm.expect(payload.profession_type).to.eql('doctor');
+        pm.expect(payload).to.not.have.any.keys('nik', 'ext_id', 'pwd0', 'person_nm');
+      });
+
+      pm.test('Cookie refresh_token bersifat HttpOnly, SameSite=Strict, Path=/api/auth', () => {
+        const setCookie = pm.response.headers.get('Set-Cookie') || '';
+        pm.expect(setCookie).to.include('refresh_token=');
+        pm.expect(setCookie).to.include('HttpOnly');
+        pm.expect(setCookie).to.include('SameSite=Strict');
+        pm.expect(setCookie).to.include('Path=/api/auth');
+      });
+

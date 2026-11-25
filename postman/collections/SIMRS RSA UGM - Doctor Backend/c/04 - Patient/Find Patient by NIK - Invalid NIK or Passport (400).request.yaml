@@ -1,0 +1,23 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/patients/by-nik?nik=A1234567'
+order: 1000
+queryParams:
+  - key: nik
+    value: A1234567
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 400 untuk input non-16 digit atau nomor paspor', () => {
+        pm.response.to.have.status(400);
+      });
+
+      pm.test('Error validasi menunjuk field nik dan menjelaskan pencarian khusus NIK', () => {
+        const body = pm.response.json();
+        pm.expect(body.errors).to.be.an('array').and.not.be.empty;
+        const nikErr = body.errors.find((e) => e.field === 'nik');
+        pm.expect(nikErr).to.exist;
+        pm.expect(nikErr.message).to.include('NIK');
+      });
+

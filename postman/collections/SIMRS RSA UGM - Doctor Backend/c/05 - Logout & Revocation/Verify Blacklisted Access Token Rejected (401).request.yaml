@@ -1,0 +1,12 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/users/me'
+order: 2000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Access token yang sudah di-logout ditolak 401 (jti ada di blacklist)', () => {
+        pm.response.to.have.status(401);
+      });
+

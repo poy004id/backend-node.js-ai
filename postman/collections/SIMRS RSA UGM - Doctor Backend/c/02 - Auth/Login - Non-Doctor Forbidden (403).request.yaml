@@ -1,0 +1,29 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/auth/login'
+order: 3000
+auth:
+  type: noauth
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "user_nm": "{{non_doctor_username}}",
+      "password": "{{non_doctor_password}}"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 403 untuk akun non-dokter dengan password benar', () => {
+        pm.response.to.have.status(403);
+      });
+
+      pm.test('Pesan penolakan khusus dokter sesuai CONTEXT.md', () => {
+        const body = pm.response.json();
+        pm.expect(body.message).to.eql('Aplikasi ini khusus untuk dokter');
+      });
+

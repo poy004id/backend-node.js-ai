@@ -1,0 +1,17 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/auth/logout'
+order: 1000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 200 untuk logout terautentikasi', () => {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test('Cookie refresh_token dibersihkan dari client', () => {
+        const setCookie = pm.response.headers.get('Set-Cookie') || '';
+        pm.expect(setCookie).to.include('refresh_token=;');
+      });
+

@@ -1,0 +1,15 @@
+$kind: collection
+name: 'SIMRS RSA UGM - Doctor Backend'
+description: >-
+  Collection pengujian API starter backend aplikasi dokter SIMRS RSA UGM
+  (modul auth, user, dan patient) sesuai CONTEXT.md.
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{access_token}}'
+variables:
+  - key: access_token
+    value: ''
+    description: JWT access token yang otomatis diperbarui oleh request Login dan Refresh
+

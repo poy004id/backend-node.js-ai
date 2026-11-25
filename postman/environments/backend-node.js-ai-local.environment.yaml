@@ -1,0 +1,33 @@
+name: backend-node.js-ai-local
+values:
+  - key: base_url
+    value: 'http://127.0.0.1:3913'
+    enabled: true
+    type: default
+    description: Base URL backend aplikasi dokter RSA UGM (sesuai PORT di .env)
+  - key: doctor_username
+    value: 'agungsupoyo'
+    enabled: true
+    type: default
+    description: Username akun dokter aktif (profession_type = doctor)
+  - key: doctor_password
+    value: 'agung123'
+    enabled: true
+    type: secret
+    description: Password akun dokter aktif (isi lokal di Postman; jangan di-commit)
+  - key: non_doctor_username
+    value: 'aniwahyu'
+    enabled: true
+    type: default
+    description: Username akun non-dokter aktif untuk uji penolakan 403
+  - key: non_doctor_password
+    value: '3aae5'
+    enabled: true
+    type: secret
+    description: Password akun non-dokter aktif (isi lokal di Postman; jangan di-commit)
+  - key: sample_nik
+    value: '3404010101800001'
+    enabled: true
+    type: default
+    description: Contoh NIK 16 digit untuk uji pencarian /api/patients/by-nik
+

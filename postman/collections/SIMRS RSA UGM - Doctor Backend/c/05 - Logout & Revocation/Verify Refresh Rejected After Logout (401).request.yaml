@@ -1,0 +1,14 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/auth/refresh'
+order: 3000
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Refresh setelah logout ditolak 401 karena sesi telah dihapus', () => {
+        pm.response.to.have.status(401);
+      });
+

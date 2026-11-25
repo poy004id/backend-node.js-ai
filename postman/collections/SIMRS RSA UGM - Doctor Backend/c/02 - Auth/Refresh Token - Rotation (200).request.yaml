@@ -1,0 +1,33 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/auth/refresh'
+order: 5000
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status 200 untuk rotasi refresh token berhasil', () => {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test('Access token baru diterbitkan tanpa objek user mentah', () => {
+        const prevToken = pm.collectionVariables.get('access_token');
+        const body = pm.response.json();
+        pm.expect(body).to.have.all.keys('access_token', 'token_type', 'expires_in');
+        pm.expect(body.token_type).to.eql('Bearer');
+        pm.expect(body.expires_in).to.eql(900);
+        pm.expect(body.access_token).to.not.eql(prevToken);
+
+        pm.collectionVariables.set('access_token', body.access_token);
+      });
+
+      pm.test('Cookie refresh_token baru dirotasi dengan atribut keamanan lengkap', () => {
+        const setCookie = pm.response.headers.get('Set-Cookie') || '';
+        pm.expect(setCookie).to.include('refresh_token=');
+        pm.expect(setCookie).to.include('HttpOnly');
+        pm.expect(setCookie).to.include('SameSite=Strict');
+        pm.expect(setCookie).to.include('Path=/api/auth');
+      });
+

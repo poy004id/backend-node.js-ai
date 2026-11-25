@@ -1,0 +1,9 @@
+workspace:
+  id: fda20968-333b-4a77-8876-0e7f5a78a944
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+cloudResources:
+  collections:
+    ../postman/collections/SIMRS RSA UGM - Doctor Backend: 22636364-a14c49d2-c7c9-41ad-99b4-356f4d74125c
+  environments:
+    ../postman/environments/backend-node.js-ai-local.environment.yaml: 22636364-6af659b4-7c97-4b7c-bc8d-85e1e0b1c5cd
